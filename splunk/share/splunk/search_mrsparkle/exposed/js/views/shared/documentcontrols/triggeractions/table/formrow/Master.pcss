@@ -1,0 +1,26 @@
+$formRowWidth: 600px;
+$formRowControlWidth: 330px;
+$formRowLabelWidth: 90px;
+
+.more-info {
+    .control-group {
+        width: $formRowControlWidth;
+        clear: both;
+    }
+    .control-label {
+        width: $formRowLabelWidth;
+    }
+    .controls {
+        margin-left: calc($formRowLabelWidth + $spacingHalf);
+    }
+    .help-block {
+        width: calc($formRowWidth - $formRowControlWidth - ($formRowLabelWidth + $spacingHalf));
+    }
+
+    .form-vertical {
+        .help-block {
+            position: initial;
+            width: initial;
+        }
+    }
+}

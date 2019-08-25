@@ -1,0 +1,39 @@
+<%page args="module"/>
+<%namespace name="lib" file="//lib.html" import="*"/>
+<%
+from mako import exceptions
+from splunk.appserver.mrsparkle.lib.i18n import path_to_i18n_paths
+import logging
+import os
+logger = logging.getLogger("splunk.appserver.modules.static.ServerSideInclude")
+error_header = _("ServerSideInclude Module Error!")
+src = "/APP/%s/appserver/static/%s" % (APP["id"], module["src"])
+
+# SPL-159906: Jail path to within the static dir
+safedir = "/APP/%s/appserver/static" % APP["id"]
+src = os.path.abspath(safedir + os.sep + module["src"])
+common_prefix = os.path.commonprefix([safedir, src])
+output = None
+
+if common_prefix == safedir:
+    # allow for i18n specific static includes to override the default
+    # eg. a request for index.html may check for index-en_GB.html and index-en.html before
+    # falling back to index.html
+    for i18nsrc in path_to_i18n_paths(src):
+        try:
+            output = capture(self.include_file, i18nsrc)
+            break
+        except exceptions.TemplateLookupException as e:
+            continue
+        except:
+            traceback = exceptions.RichTraceback()
+            logger.error("Fatal template error. %s" % traceback.error)
+            output = lib.template.get_def('traceback').render(header=error_header)
+else:
+    e = "Invalid template path. %s" % src
+
+if output is None:
+    logger.error(e)
+    output = '<div class="traceback"><h2>%s</h2> %s</div>' % (error_header, e)    
+%>
+${output}

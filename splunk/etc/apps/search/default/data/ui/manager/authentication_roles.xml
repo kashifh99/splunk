@@ -1,0 +1,6 @@
+<endpoint name="authorization/roles" showAppContext="1" template="pages/system.html">
+   <header>Roles</header>
+   <capabilities>
+   <read>edit_roles OR edit_roles_grantable</read>
+   </capabilities>
+</endpoint>
